@@ -11,8 +11,12 @@ export default function Home() {
   };
 
   const onStart2 = () => {
-    window.open("https://study-mate-ecru.vercel.app/", "_blank", "noopener,noreferrer");
-  };
+  window.open(
+    "https://path-findr-study--22311a05an.replit.app",
+    "_blank",
+    "noopener,noreferrer"
+  );
+};
 
   return (
     <div 
