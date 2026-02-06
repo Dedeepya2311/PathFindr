@@ -11,7 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-// import { MockInterview } from "C:/Users/yash/Desktop/StudyMate/my-app/utils/schema.js"
+// import { MockInterview } from "C:/Users/Dedeepya/Desktop/PathFindr/my-app/utils/schema.js"
 import { chatSession } from '@/utils/GeminiAiModel.js';
 import { db } from '@/utils/db.js';
 import {v4 as uuidv4} from 'uuid';
