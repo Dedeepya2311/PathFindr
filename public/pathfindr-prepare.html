@@ -1,0 +1,1585 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathFindr - Resource Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: #f8f9fa;
+            color: #212529;
+        }
+
+        /* Auth Pages Styles */
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        }
+
+        .auth-box {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            width: 100%;
+            max-width: 440px;
+        }
+
+        .auth-logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 32px;
+            justify-content: center;
+        }
+
+        .auth-logo svg {
+            width: 32px;
+            height: 32px;
+        }
+
+        .auth-logo h1 {
+            font-size: 28px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .auth-title {
+            text-align: center;
+            margin-bottom: 8px;
+            color: #212529;
+            font-size: 24px;
+            font-weight: 600;
+        }
+
+        .auth-subtitle {
+            text-align: center;
+            margin-bottom: 24px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .social-login {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        .social-btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            font-weight: 500;
+            transition: all 0.2s;
+            color: #495057;
+        }
+
+        .social-btn:hover {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        .social-btn img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .divider {
+            display: flex;
+            align-items: center;
+            margin: 24px 0;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .divider::before,
+        .divider::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: #dee2e6;
+        }
+
+        .divider::before {
+            margin-right: 16px;
+        }
+
+        .divider::after {
+            margin-left: 16px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #495057;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .form-group input {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 15px;
+            transition: border-color 0.2s;
+        }
+
+        .form-group input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .auth-btn {
+            width: 100%;
+            padding: 12px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .auth-btn:hover {
+            background: #5568d3;
+        }
+
+        .auth-switch {
+            text-align: center;
+            margin-top: 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+
+        .auth-switch a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .auth-switch a:hover {
+            text-decoration: underline;
+        }
+
+        /* Dashboard Styles */
+        .dashboard {
+            display: none;
+            min-height: 100vh;
+        }
+
+        .dashboard.active {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: white;
+            border-right: 1px solid #e9ecef;
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            height: 100vh;
+            left: 0;
+            top: 0;
+        }
+
+        .logo-section {
+            padding: 24px 20px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .logo svg {
+            width: 24px;
+            height: 24px;
+        }
+
+        .logo h1 {
+            font-size: 22px;
+            color: #667eea;
+            font-weight: 700;
+        }
+
+        .nav-menu {
+            flex: 1;
+            padding: 20px 0;
+        }
+
+        .nav-item {
+            padding: 12px 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #6c757d;
+            font-weight: 500;
+            transition: all 0.2s;
+            margin: 0 12px;
+            border-radius: 8px;
+        }
+
+        .nav-item:hover {
+            background: #f8f9fa;
+            color: #495057;
+        }
+
+        .nav-item.active {
+            background: #e7e9fc;
+            color: #667eea;
+        }
+
+        .nav-item svg {
+            width: 20px;
+            height: 20px;
+        }
+
+        .user-section {
+            padding: 20px;
+            border-top: 1px solid #e9ecef;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #667eea;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+        }
+
+        .user-details h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: #212529;
+        }
+
+        .user-details p {
+            font-size: 12px;
+            color: #6c757d;
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 10px;
+            background: white;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            color: #6c757d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+
+        .logout-btn:hover {
+            background: #f8f9fa;
+            border-color: #adb5bd;
+        }
+
+        .main-content {
+            margin-left: 260px;
+            flex: 1;
+            padding: 32px 40px;
+        }
+
+        .header {
+            margin-bottom: 32px;
+        }
+
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .header h2 {
+            font-size: 32px;
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .header p {
+            color: #6c757d;
+            font-size: 15px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 12px;
+        }
+
+        .add-resource-btn, .create-folder-btn {
+            padding: 12px 24px;
+            background: #667eea;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: background 0.2s;
+        }
+
+        .create-folder-btn {
+            background: #198754;
+        }
+
+        .add-resource-btn:hover {
+            background: #5568d3;
+        }
+
+        .create-folder-btn:hover {
+            background: #157347;
+        }
+
+        .search-filter {
+            display: flex;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+
+        .search-box {
+            flex: 1;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 16px 12px 44px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 15px;
+        }
+
+        .search-box svg {
+            position: absolute;
+            left: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 20px;
+            height: 20px;
+            color: #6c757d;
+        }
+
+        .filter-dropdown {
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            background: white;
+            color: #495057;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-weight: 500;
+        }
+
+        .resources-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .resource-card, .folder-card {
+            background: white;
+            border: 1px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+        }
+
+        .resource-card:hover, .folder-card:hover {
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            transform: translateY(-2px);
+        }
+
+        .folder-card {
+            border: 2px dashed #667eea;
+            background: #f8f9ff;
+        }
+
+        .card-actions {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            display: flex;
+            gap: 8px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .resource-card:hover .card-actions,
+        .folder-card:hover .card-actions {
+            opacity: 1;
+        }
+
+        .action-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 6px;
+            border: none;
+            background: white;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s;
+        }
+
+        .action-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .action-btn.delete {
+            color: #dc3545;
+        }
+
+        .action-btn.open {
+            color: #0d6efd;
+        }
+
+        .resource-icon, .folder-icon {
+            width: 48px;
+            height: 48px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            font-size: 24px;
+        }
+
+        .resource-card h3, .folder-card h3 {
+            font-size: 16px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .resource-card p, .folder-card p {
+            font-size: 14px;
+            color: #6c757d;
+            margin-bottom: 12px;
+        }
+
+        .resource-meta {
+            display: flex;
+            justify-content: space-between;
+            font-size: 12px;
+            color: #adb5bd;
+        }
+
+        .folder-badge {
+            display: inline-block;
+            padding: 4px 8px;
+            background: #667eea;
+            color: white;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 80px 20px;
+        }
+
+        .empty-state svg {
+            width: 80px;
+            height: 80px;
+            color: #dee2e6;
+            margin-bottom: 24px;
+        }
+
+        .empty-state h3 {
+            font-size: 20px;
+            font-weight: 600;
+            color: #212529;
+            margin-bottom: 8px;
+        }
+
+        .empty-state p {
+            color: #6c757d;
+            font-size: 15px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 16px;
+            padding: 32px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            margin-bottom: 24px;
+        }
+
+        .modal-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            color: #212529;
+        }
+
+        .modal-body .form-group {
+            margin-bottom: 20px;
+        }
+
+        .modal-body select,
+        .modal-body textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 15px;
+            font-family: inherit;
+        }
+
+        .file-upload {
+            border: 2px dashed #dee2e6;
+            border-radius: 8px;
+            padding: 32px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .file-upload:hover {
+            border-color: #667eea;
+            background: #f8f9fa;
+        }
+
+        .file-upload input {
+            display: none;
+        }
+
+        .checkbox-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 12px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .checkbox-item:hover {
+            background: #f8f9fa;
+        }
+
+        .checkbox-item input {
+            cursor: pointer;
+        }
+
+        .modal-footer {
+            display: flex;
+            gap: 12px;
+            margin-top: 24px;
+        }
+
+        .modal-footer button {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #495057;
+        }
+
+        .btn-submit {
+            background: #667eea;
+            color: white;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 16px;
+            font-size: 14px;
+            color: #6c757d;
+        }
+
+        .breadcrumb a {
+            color: #667eea;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sign In Page -->
+    <div id="signInPage" class="auth-container">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+                </svg>
+                <h1>PathFindr</h1>
+            </div>
+            <h2 class="auth-title">Welcome back</h2>
+            <p class="auth-subtitle">Sign in to your account to continue</p>
+            
+            <div class="social-login">
+                <button class="social-btn" onclick="socialLogin('google')">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                <button class="social-btn" onclick="socialLogin('github')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#181717">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    Continue with GitHub
+                </button>
+                <button class="social-btn" onclick="socialLogin('microsoft')">
+                    <svg width="20" height="20" viewBox="0 0 23 23">
+                        <path fill="#f35325" d="M0 0h11v11H0z"/>
+                        <path fill="#81bc06" d="M12 0h11v11H12z"/>
+                        <path fill="#05a6f0" d="M0 12h11v11H0z"/>
+                        <path fill="#ffba08" d="M12 12h11v11H12z"/>
+                    </svg>
+                    Continue with Microsoft
+                </button>
+            </div>
+
+            <div class="divider">OR</div>
+
+            <form id="signInForm">
+                <div class="form-group">
+                    <label for="signInEmail">Email</label>
+                    <input type="email" id="signInEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signInPassword">Password</label>
+                    <input type="password" id="signInPassword" placeholder="Enter your password" required>
+                </div>
+                <button type="submit" class="auth-btn">Sign In</button>
+            </form>
+
+            <div class="auth-switch">
+                Don't have an account? <a id="showSignUp">Sign up</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sign Up Page -->
+    <div id="signUpPage" class="auth-container hidden">
+        <div class="auth-box">
+            <div class="auth-logo">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+                </svg>
+                <h1>PathFindr</h1>
+            </div>
+            <h2 class="auth-title">Create account</h2>
+            <p class="auth-subtitle">Sign up to get started with PathFindr</p>
+            
+            <div class="social-login">
+                <button class="social-btn" onclick="socialLogin('google')">
+                    <svg width="20" height="20" viewBox="0 0 24 24">
+                        <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                        <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                        <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/>
+                        <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/>
+                    </svg>
+                    Continue with Google
+                </button>
+                <button class="social-btn" onclick="socialLogin('github')">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="#181717">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                    Continue with GitHub
+                </button>
+                <button class="social-btn" onclick="socialLogin('microsoft')">
+                    <svg width="20" height="20" viewBox="0 0 23 23">
+                        <path fill="#f35325" d="M0 0h11v11H0z"/>
+                        <path fill="#81bc06" d="M12 0h11v11H12z"/>
+                        <path fill="#05a6f0" d="M0 12h11v11H0z"/>
+                        <path fill="#ffba08" d="M12 12h11v11H12z"/>
+                    </svg>
+                    Continue with Microsoft
+                </button>
+            </div>
+
+            <div class="divider">OR</div>
+
+            <form id="signUpForm">
+                <div class="form-group">
+                    <label for="signUpName">Full Name</label>
+                    <input type="text" id="signUpName" placeholder="Enter your name" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpEmail">Email</label>
+                    <input type="email" id="signUpEmail" placeholder="Enter your email" required>
+                </div>
+                <div class="form-group">
+                    <label for="signUpPassword">Password</label>
+                    <input type="password" id="signUpPassword" placeholder="Create a password" required>
+                </div>
+                <button type="submit" class="auth-btn">Sign Up</button>
+            </form>
+
+            <div class="auth-switch">
+                Already have an account? <a id="showSignIn">Sign in</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- Dashboard -->
+    <div id="dashboard" class="dashboard">
+        <aside class="sidebar">
+            <div class="logo-section">
+                <div class="logo">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M3 3h7v7H3zM14 3h7v7h-7zM14 14h7v7h-7zM3 14h7v7H3z"/>
+                    </svg>
+                    <h1>PathFindr</h1>
+                </div>
+            </div>
+            <nav class="nav-menu">
+                <div class="nav-item active" data-page="dashboard">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="7" height="7"/>
+                        <rect x="14" y="3" width="7" height="7"/>
+                        <rect x="14" y="14" width="7" height="7"/>
+                        <rect x="3" y="14" width="7" height="7"/>
+                    </svg>
+                    Dashboard
+                </div>
+                <div class="nav-item" data-page="pdfs">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10 9 9 9 8 9"/>
+                    </svg>
+                    PDFs
+                </div>
+                <div class="nav-item" data-page="notes">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14 2 14 8 20 8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                    </svg>
+                    Notes
+                </div>
+            </nav>
+            <div class="user-section">
+                <div class="user-info">
+                    <div class="user-avatar" id="userAvatar">D</div>
+                    <div class="user-details">
+                        <h3 id="userName">User</h3>
+                        <p id="userEmail">user@email.com</p>
+                    </div>
+                </div>
+                <button class="logout-btn" id="logoutBtn">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+                        <polyline points="16 17 21 12 16 7"/>
+                        <line x1="21" y1="12" x2="9" y2="12"/>
+                    </svg>
+                    Log Out
+                </button>
+            </div>
+        </aside>
+
+        <main class="main-content">
+            <div class="breadcrumb" id="breadcrumb">
+                <a onclick="navigateToView('dashboard')">Dashboard</a>
+            </div>
+
+            <div class="header">
+                <div class="header-top">
+                    <div>
+                        <h2 id="welcomeMessage">Welcome back, User</h2>
+                        <p id="headerSubtitle">Here's what you've been working on recently.</p>
+                    </div>
+                    <div class="header-actions">
+                        <button class="create-folder-btn" id="createFolderBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                            </svg>
+                            Create Folder
+                        </button>
+                        <button class="add-resource-btn" id="addResourceBtn">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <line x1="12" y1="5" x2="12" y2="19"/>
+                                <line x1="5" y1="12" x2="19" y2="12"/>
+                            </svg>
+                            <span id="addBtnText">Add Resource</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="search-filter">
+                <div class="search-box">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <input type="text" id="searchInput" placeholder="Search resources...">
+                </div>
+                <div class="filter-dropdown">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+                    </svg>
+                    All Types
+                </div>
+            </div>
+
+            <div id="resourcesContainer">
+                <div class="empty-state">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="11" cy="11" r="8"/>
+                        <path d="m21 21-4.35-4.35"/>
+                    </svg>
+                    <h3>No resources found</h3>
+                    <p>Try adjusting your search terms or create a new resource to get started.</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Resource Modal -->
+    <div id="resourceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle">Add New Resource</h2>
+            </div>
+            <form id="resourceForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="resourceName">Resource Name</label>
+                        <input type="text" id="resourceName" placeholder="Enter resource name" required>
+                    </div>
+                    <div class="form-group" id="resourceTypeGroup">
+                        <label for="resourceType">Type</label>
+                        <select id="resourceType" required>
+                            <option value="pdf">PDF Document</option>
+                            <option value="note">Note</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="resourceDescription">Description</label>
+                        <textarea id="resourceDescription" rows="3" placeholder="Add a brief description"></textarea>
+                    </div>
+                    <div class="form-group" id="fileUploadGroup">
+                        <label>Upload File</label>
+                        <div class="file-upload" id="fileUpload">
+                            <input type="file" id="fileInput" accept=".pdf,.doc,.docx,.txt">
+                            <p>Click to upload or drag and drop</p>
+                            <p style="font-size: 12px; color: #adb5bd; margin-top: 8px;">PDF, DOC, TXT (MAX. 10MB)</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelBtn">Cancel</button>
+                    <button type="submit" class="btn-submit">Add Resource</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Create Folder Modal -->
+    <div id="folderModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create Folder</h2>
+            </div>
+            <form id="folderForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="folderName">Folder Name</label>
+                        <input type="text" id="folderName" placeholder="Enter folder name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="folderDescription">Description</label>
+                        <textarea id="folderDescription" rows="2" placeholder="Add a brief description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label>Select Resources to Include</label>
+                        <div class="checkbox-list" id="resourceCheckboxList">
+                            <p style="text-align: center; color: #6c757d;">No resources available</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn-cancel" id="cancelFolderBtn">Cancel</button>
+                    <button type="submit" class="btn-submit">Create Folder</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Application State
+        let currentUser = null;
+        let resources = [];
+        let folders = [];
+        let currentView = 'dashboard';
+        let currentFolder = null;
+
+        // Get elements
+        const signInPage = document.getElementById('signInPage');
+        const signUpPage = document.getElementById('signUpPage');
+        const dashboard = document.getElementById('dashboard');
+        const signInForm = document.getElementById('signInForm');
+        const signUpForm = document.getElementById('signUpForm');
+        const showSignUp = document.getElementById('showSignUp');
+        const showSignIn = document.getElementById('showSignIn');
+        const logoutBtn = document.getElementById('logoutBtn');
+        const addResourceBtn = document.getElementById('addResourceBtn');
+        const createFolderBtn = document.getElementById('createFolderBtn');
+        const resourceModal = document.getElementById('resourceModal');
+        const folderModal = document.getElementById('folderModal');
+        const resourceForm = document.getElementById('resourceForm');
+        const folderForm = document.getElementById('folderForm');
+        const cancelBtn = document.getElementById('cancelBtn');
+        const cancelFolderBtn = document.getElementById('cancelFolderBtn');
+        const searchInput = document.getElementById('searchInput');
+        const resourcesContainer = document.getElementById('resourcesContainer');
+        const fileUpload = document.getElementById('fileUpload');
+        const fileInput = document.getElementById('fileInput');
+        const navItems = document.querySelectorAll('.nav-item');
+
+        // Initialize app
+        function init() {
+            const savedUser = localStorage.getItem('pathfindr_user');
+            const savedResources = localStorage.getItem('pathfindr_resources');
+            const savedFolders = localStorage.getItem('pathfindr_folders');
+            
+            if (savedResources) {
+                resources = JSON.parse(savedResources);
+            }
+            
+            if (savedFolders) {
+                folders = JSON.parse(savedFolders);
+            }
+            
+            if (savedUser) {
+                currentUser = JSON.parse(savedUser);
+                showDashboard();
+            }
+        }
+
+        // Switch between sign in and sign up
+        showSignUp.addEventListener('click', () => {
+            signInPage.classList.add('hidden');
+            signUpPage.classList.remove('hidden');
+        });
+
+        showSignIn.addEventListener('click', () => {
+            signUpPage.classList.add('hidden');
+            signInPage.classList.remove('hidden');
+        });
+
+        // Social Login
+        function socialLogin(provider) {
+            const email = `user@${provider}.com`;
+            const name = provider.charAt(0).toUpperCase() + provider.slice(1) + ' User';
+            
+            currentUser = {
+                email: email,
+                name: name,
+                initials: name.charAt(0).toUpperCase(),
+                provider: provider
+            };
+            
+            localStorage.setItem('pathfindr_user', JSON.stringify(currentUser));
+            showDashboard();
+        }
+
+        // Sign In
+        signInForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const email = document.getElementById('signInEmail').value;
+            
+            currentUser = {
+                email: email,
+                name: email.split('@')[0],
+                initials: email.charAt(0).toUpperCase()
+            };
+            
+            localStorage.setItem('pathfindr_user', JSON.stringify(currentUser));
+            showDashboard();
+        });
+
+        // Sign Up
+        signUpForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const name = document.getElementById('signUpName').value;
+            const email = document.getElementById('signUpEmail').value;
+            
+            currentUser = {
+                email: email,
+                name: name,
+                initials: name.charAt(0).toUpperCase()
+            };
+            
+            localStorage.setItem('pathfindr_user', JSON.stringify(currentUser));
+            showDashboard();
+        });
+
+        // Logout
+        logoutBtn.addEventListener('click', () => {
+            currentUser = null;
+            localStorage.removeItem('pathfindr_user');
+            signInPage.classList.remove('hidden');
+            signUpPage.classList.add('hidden');
+            dashboard.classList.remove('active');
+            signInForm.reset();
+            signUpForm.reset();
+        });
+
+        // Show Dashboard
+        function showDashboard() {
+            signInPage.classList.add('hidden');
+            signUpPage.classList.add('hidden');
+            dashboard.classList.add('active');
+            
+            document.getElementById('userName').textContent = currentUser.name;
+            document.getElementById('userEmail').textContent = currentUser.email;
+            document.getElementById('userAvatar').textContent = currentUser.initials;
+            document.getElementById('welcomeMessage').textContent = `Welcome back, ${currentUser.name}`;
+            
+            navigateToView('dashboard');
+        }
+
+        // Navigation
+        navItems.forEach(item => {
+            item.addEventListener('click', () => {
+                const page = item.dataset.page;
+                navItems.forEach(i => i.classList.remove('active'));
+                item.classList.add('active');
+                navigateToView(page);
+            });
+        });
+
+        function navigateToView(view) {
+            currentView = view;
+            currentFolder = null;
+            updateBreadcrumb();
+            
+            const headerSubtitle = document.getElementById('headerSubtitle');
+            const addBtnText = document.getElementById('addBtnText');
+            
+            switch(view) {
+                case 'dashboard':
+                    headerSubtitle.textContent = "Here's what you've been working on recently.";
+                    addBtnText.textContent = 'Add Resource';
+                    renderDashboard();
+                    break;
+                case 'pdfs':
+                    headerSubtitle.textContent = 'Manage your PDF documents.';
+                    addBtnText.textContent = 'Add PDF';
+                    renderPDFs();
+                    break;
+                case 'notes':
+                    headerSubtitle.textContent = 'Manage your notes.';
+                    addBtnText.textContent = 'Add Note';
+                    renderNotes();
+                    break;
+            }
+        }
+
+        function updateBreadcrumb() {
+            const breadcrumb = document.getElementById('breadcrumb');
+            let html = '<a onclick="navigateToView(\'dashboard\')">Dashboard</a>';
+            
+            if (currentView === 'pdfs') {
+                html += ' <span>/</span> <a onclick="navigateToView(\'pdfs\')">PDFs</a>';
+            } else if (currentView === 'notes') {
+                html += ' <span>/</span> <a onclick="navigateToView(\'notes\')">Notes</a>';
+            }
+            
+            if (currentFolder) {
+                html += ` <span>/</span> <span>${currentFolder.name}</span>`;
+            }
+            
+            breadcrumb.innerHTML = html;
+        }
+
+        // Add Resource Modal
+        addResourceBtn.addEventListener('click', () => {
+            document.getElementById('modalTitle').textContent = currentView === 'pdfs' ? 'Add New PDF' : currentView === 'notes' ? 'Add New Note' : 'Add New Resource';
+            
+            if (currentView === 'pdfs') {
+                document.getElementById('resourceType').value = 'pdf';
+                document.getElementById('resourceTypeGroup').style.display = 'none';
+                document.getElementById('fileUploadGroup').style.display = 'block';
+            } else if (currentView === 'notes') {
+                document.getElementById('resourceType').value = 'note';
+                document.getElementById('resourceTypeGroup').style.display = 'none';
+                document.getElementById('fileUploadGroup').style.display = 'none';
+            } else {
+                document.getElementById('resourceTypeGroup').style.display = 'block';
+                document.getElementById('fileUploadGroup').style.display = 'block';
+            }
+            
+            resourceModal.classList.add('active');
+        });
+
+        cancelBtn.addEventListener('click', () => {
+            resourceModal.classList.remove('active');
+            resourceForm.reset();
+        });
+
+        // Create Folder Modal
+        createFolderBtn.addEventListener('click', () => {
+            updateResourceCheckboxList();
+            folderModal.classList.add('active');
+        });
+
+        cancelFolderBtn.addEventListener('click', () => {
+            folderModal.classList.remove('active');
+            folderForm.reset();
+        });
+
+        function updateResourceCheckboxList() {
+            const checkboxList = document.getElementById('resourceCheckboxList');
+            
+            if (resources.length === 0) {
+                checkboxList.innerHTML = '<p style="text-align: center; color: #6c757d;">No resources available</p>';
+                return;
+            }
+            
+            const html = resources.map(r => `
+                <label class="checkbox-item">
+                    <input type="checkbox" name="folderResources" value="${r.id}">
+                    <span>${r.name} (${r.type.toUpperCase()})</span>
+                </label>
+            `).join('');
+            
+            checkboxList.innerHTML = html;
+        }
+
+        // File upload interaction
+        fileUpload.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                const fileName = e.target.files[0].name;
+                fileUpload.querySelector('p').textContent = fileName;
+            }
+        });
+
+        // Submit Resource
+        resourceForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const newResource = {
+                id: Date.now(),
+                name: document.getElementById('resourceName').value,
+                type: document.getElementById('resourceType').value,
+                description: document.getElementById('resourceDescription').value,
+                file: fileInput.files[0] ? {
+                    name: fileInput.files[0].name,
+                    size: `${(fileInput.files[0].size / 1024).toFixed(1)} KB`,
+                    url: URL.createObjectURL(fileInput.files[0])
+                } : null,
+                date: new Date().toISOString(),
+                folderId: currentFolder ? currentFolder.id : null
+            };
+            
+            resources.unshift(newResource);
+            localStorage.setItem('pathfindr_resources', JSON.stringify(resources));
+            
+            resourceModal.classList.remove('active');
+            resourceForm.reset();
+            
+            if (currentView === 'dashboard') {
+                renderDashboard();
+            } else if (currentView === 'pdfs') {
+                renderPDFs();
+            } else if (currentView === 'notes') {
+                renderNotes();
+            }
+        });
+
+        // Submit Folder
+        folderForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            const selectedResources = Array.from(document.querySelectorAll('input[name="folderResources"]:checked'))
+                .map(cb => parseInt(cb.value));
+            
+            const newFolder = {
+                id: Date.now(),
+                name: document.getElementById('folderName').value,
+                description: document.getElementById('folderDescription').value,
+                resourceIds: selectedResources,
+                date: new Date().toISOString()
+            };
+            
+            folders.unshift(newFolder);
+            localStorage.setItem('pathfindr_folders', JSON.stringify(folders));
+            
+            folderModal.classList.remove('active');
+            folderForm.reset();
+            
+            if (currentView === 'dashboard') {
+                renderDashboard();
+            } else if (currentView === 'pdfs') {
+                renderPDFs();
+            } else if (currentView === 'notes') {
+                renderNotes();
+            }
+        });
+
+        // Render Functions
+        function renderDashboard(filter = '') {
+            const allItems = [
+                ...folders.map(f => ({ ...f, itemType: 'folder' })),
+                ...resources.filter(r => !r.folderId).map(r => ({ ...r, itemType: 'resource' }))
+            ].filter(item => 
+                item.name.toLowerCase().includes(filter.toLowerCase()) ||
+                (item.description && item.description.toLowerCase().includes(filter.toLowerCase()))
+            );
+
+            if (allItems.length === 0) {
+                resourcesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="m21 21-4.35-4.35"/>
+                        </svg>
+                        <h3>No resources found</h3>
+                        <p>Try adjusting your search terms or create a new resource to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const itemsHTML = allItems.map(item => {
+                if (item.itemType === 'folder') {
+                    return renderFolderCard(item);
+                } else {
+                    return renderResourceCard(item);
+                }
+            }).join('');
+
+            resourcesContainer.innerHTML = `<div class="resources-grid">${itemsHTML}</div>`;
+        }
+
+        function renderPDFs(filter = '') {
+            const pdfs = resources.filter(r => 
+                r.type === 'pdf' && 
+                !r.folderId &&
+                (r.name.toLowerCase().includes(filter.toLowerCase()) ||
+                (r.description && r.description.toLowerCase().includes(filter.toLowerCase())))
+            );
+
+            if (pdfs.length === 0) {
+                resourcesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <h3>No PDFs found</h3>
+                        <p>Add your first PDF to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const pdfsHTML = pdfs.map(pdf => renderResourceCard(pdf)).join('');
+            resourcesContainer.innerHTML = `<div class="resources-grid">${pdfsHTML}</div>`;
+        }
+
+        function renderNotes(filter = '') {
+            const notes = resources.filter(r => 
+                r.type === 'note' && 
+                !r.folderId &&
+                (r.name.toLowerCase().includes(filter.toLowerCase()) ||
+                (r.description && r.description.toLowerCase().includes(filter.toLowerCase())))
+            );
+
+            if (notes.length === 0) {
+                resourcesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                            <polyline points="14 2 14 8 20 8"/>
+                        </svg>
+                        <h3>No notes found</h3>
+                        <p>Create your first note to get started.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            const notesHTML = notes.map(note => renderResourceCard(note)).join('');
+            resourcesContainer.innerHTML = `<div class="resources-grid">${notesHTML}</div>`;
+        }
+
+        function renderResourceCard(resource) {
+            const iconColors = {
+                pdf: '#dc3545',
+                note: '#ffc107'
+            };
+            
+            const icons = {
+                pdf: '📄',
+                note: '📝'
+            };
+
+            return `
+                <div class="resource-card">
+                    <div class="card-actions">
+                        ${resource.file ? `<button class="action-btn open" onclick="openResource(${resource.id})" title="Open">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+                                <polyline points="15 3 21 3 21 9"/>
+                                <line x1="10" y1="14" x2="21" y2="3"/>
+                            </svg>
+                        </button>` : ''}
+                        <button class="action-btn delete" onclick="deleteResource(${resource.id})" title="Delete">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="resource-icon" style="background: ${iconColors[resource.type]}20; color: ${iconColors[resource.type]}">
+                        ${icons[resource.type]}
+                    </div>
+                    <h3>${resource.name}</h3>
+                    <p>${resource.description || 'No description'}</p>
+                    <div class="resource-meta">
+                        <span>${new Date(resource.date).toLocaleDateString()}</span>
+                        <span>${resource.file ? resource.file.size : 'N/A'}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderFolderCard(folder) {
+            const resourceCount = folder.resourceIds.length;
+            
+            return `
+                <div class="folder-card" onclick="openFolder(${folder.id})">
+                    <div class="card-actions">
+                        <button class="action-btn delete" onclick="event.stopPropagation(); deleteFolder(${folder.id})" title="Delete">
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <polyline points="3 6 5 6 21 6"/>
+                                <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="folder-icon" style="background: #667eea20; color: #667eea">
+                        📁
+                    </div>
+                    <h3>${folder.name}</h3>
+                    <p>${folder.description || 'No description'}</p>
+                    <div class="resource-meta">
+                        <span class="folder-badge">${resourceCount} item${resourceCount !== 1 ? 's' : ''}</span>
+                        <span>${new Date(folder.date).toLocaleDateString()}</span>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Resource Actions
+        function openResource(id) {
+            const resource = resources.find(r => r.id === id);
+            if (resource && resource.file && resource.file.url) {
+                window.open(resource.file.url, '_blank');
+            }
+        }
+
+        function deleteResource(id) {
+            if (confirm('Are you sure you want to delete this resource?')) {
+                resources = resources.filter(r => r.id !== id);
+                localStorage.setItem('pathfindr_resources', JSON.stringify(resources));
+                
+                // Also remove from folders
+                folders.forEach(folder => {
+                    folder.resourceIds = folder.resourceIds.filter(rid => rid !== id);
+                });
+                localStorage.setItem('pathfindr_folders', JSON.stringify(folders));
+                
+                if (currentView === 'dashboard') {
+                    renderDashboard();
+                } else if (currentView === 'pdfs') {
+                    renderPDFs();
+                } else if (currentView === 'notes') {
+                    renderNotes();
+                }
+            }
+        }
+
+        function deleteFolder(id) {
+            if (confirm('Are you sure you want to delete this folder? Resources inside will not be deleted.')) {
+                folders = folders.filter(f => f.id !== id);
+                localStorage.setItem('pathfindr_folders', JSON.stringify(folders));
+                
+                if (currentView === 'dashboard') {
+                    renderDashboard();
+                } else if (currentView === 'pdfs') {
+                    renderPDFs();
+                } else if (currentView === 'notes') {
+                    renderNotes();
+                }
+            }
+        }
+
+        function openFolder(id) {
+            const folder = folders.find(f => f.id === id);
+            if (!folder) return;
+            
+            currentFolder = folder;
+            updateBreadcrumb();
+            
+            const folderResources = resources.filter(r => folder.resourceIds.includes(r.id));
+            
+            if (folderResources.length === 0) {
+                resourcesContainer.innerHTML = `
+                    <div class="empty-state">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/>
+                        </svg>
+                        <h3>Empty folder</h3>
+                        <p>This folder doesn't contain any resources yet.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            const resourcesHTML = folderResources.map(r => renderResourceCard(r)).join('');
+            resourcesContainer.innerHTML = `<div class="resources-grid">${resourcesHTML}</div>`;
+        }
+
+        // Search
+        searchInput.addEventListener('input', (e) => {
+            const filter = e.target.value;
+            if (currentView === 'dashboard') {
+                renderDashboard(filter);
+            } else if (currentView === 'pdfs') {
+                renderPDFs(filter);
+            } else if (currentView === 'notes') {
+                renderNotes(filter);
+            }
+        });
+
+        // Close modals on outside click
+        resourceModal.addEventListener('click', (e) => {
+            if (e.target === resourceModal) {
+                resourceModal.classList.remove('active');
+                resourceForm.reset();
+            }
+        });
+
+        folderModal.addEventListener('click', (e) => {
+            if (e.target === folderModal) {
+                folderModal.classList.remove('active');
+                folderForm.reset();
+            }
+        });
+
+        // Initialize app on load
+        init();
+    </script>
+</body>
+</html>
