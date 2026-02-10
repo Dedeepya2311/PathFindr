@@ -7,8 +7,8 @@ export default function Home() {
   const router = useRouter();
 
   const onStart1 = () => {
-    router.push('/dashboard');
-  };
+  window.open("/pathfindr-practice.html", "_blank");
+};
 
   const onStart2 = () => {
     window.open("/pathfindr-prepare.html", "_blank");
