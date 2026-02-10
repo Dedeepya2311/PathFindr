@@ -1,0 +1,1747 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Practice & Mock Tests</title>
+    <link href="https://fonts.googleapis.com/css2?family=Epilogue:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mammoth/1.6.0/mammoth.browser.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0f1a;
+            --bg-secondary: #131b2e;
+            --bg-tertiary: #1a2538;
+            --accent-primary: #00ff88;
+            --accent-secondary: #00ccff;
+            --text-primary: #ffffff;
+            --text-secondary: #8b95a8;
+            --text-muted: #4a5568;
+            --border-color: #2a3650;
+            --danger: #ff4466;
+            --warning: #ffaa00;
+            --success: #00ff88;
+        }
+
+        body {
+            font-family: 'Epilogue', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        .background-grid {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(var(--border-color) 1px, transparent 1px),
+                linear-gradient(90deg, var(--border-color) 1px, transparent 1px);
+            background-size: 50px 50px;
+            opacity: 0.1;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 60px;
+            animation: fadeInDown 0.8s ease-out;
+        }
+
+        h1 {
+            font-size: 3.5rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            letter-spacing: -2px;
+        }
+
+        .subtitle {
+            color: var(--text-secondary);
+            font-size: 1.2rem;
+            font-weight: 500;
+        }
+
+        .mode-selector {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 24px;
+            margin-bottom: 50px;
+            animation: fadeInUp 0.8s ease-out 0.2s both;
+        }
+
+        .mode-card {
+            background: var(--bg-secondary);
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            padding: 32px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .mode-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transform: scaleX(0);
+            transform-origin: left;
+            transition: transform 0.3s ease;
+        }
+
+        .mode-card:hover {
+            border-color: var(--accent-primary);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 255, 136, 0.1);
+        }
+
+        .mode-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .mode-card.active {
+            border-color: var(--accent-primary);
+            background: linear-gradient(135deg, rgba(0, 255, 136, 0.05), rgba(0, 204, 255, 0.05));
+        }
+
+        .mode-icon {
+            font-size: 2.5rem;
+            margin-bottom: 16px;
+        }
+
+        .mode-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+
+        .mode-description {
+            color: var(--text-secondary);
+            font-size: 0.95rem;
+        }
+
+        .upload-section {
+            background: var(--bg-secondary);
+            border: 2px dashed var(--border-color);
+            border-radius: 20px;
+            padding: 60px 40px;
+            text-align: center;
+            margin-bottom: 40px;
+            transition: all 0.3s ease;
+            animation: fadeInUp 0.8s ease-out 0.4s both;
+        }
+
+        .upload-section.dragover {
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .upload-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            opacity: 0.6;
+        }
+
+        .upload-text {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+        }
+
+        .file-input-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+
+        input[type="file"] {
+            display: none;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 32px;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+            font-family: 'Epilogue', sans-serif;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg-tertiary);
+            color: var(--text-primary);
+            border: 2px solid var(--border-color);
+        }
+
+        .btn-secondary:hover {
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .uploaded-files {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-top: 24px;
+            justify-content: center;
+        }
+
+        .file-tag {
+            background: var(--bg-tertiary);
+            padding: 10px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border: 1px solid var(--border-color);
+            font-family: 'JetBrains Mono', monospace;
+            transition: all 0.3s ease;
+        }
+
+        .file-tag.selected {
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .file-checkbox {
+            width: 20px;
+            height: 20px;
+            cursor: pointer;
+            accent-color: var(--accent-primary);
+        }
+
+        .file-info {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .file-name {
+            font-weight: 600;
+        }
+
+        .file-size {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .remove-file {
+            cursor: pointer;
+            color: var(--danger);
+            font-weight: bold;
+            transition: transform 0.2s ease;
+        }
+
+        .remove-file:hover {
+            transform: scale(1.2);
+        }
+
+        .config-section {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            animation: fadeInUp 0.8s ease-out 0.6s both;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 24px;
+            margin-bottom: 24px;
+        }
+
+        .config-item label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .config-item input,
+        .config-item select,
+        .config-item textarea {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Epilogue', sans-serif;
+            transition: all 0.3s ease;
+        }
+
+        .config-item input:focus,
+        .config-item select:focus,
+        .config-item textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .config-item textarea {
+            resize: vertical;
+            min-height: 100px;
+            font-size: 0.95rem;
+        }
+
+        .generate-btn {
+            width: 100%;
+            padding: 20px;
+            font-size: 1.2rem;
+            margin-top: 20px;
+        }
+
+        .test-container {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .test-header {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .timer {
+            font-size: 2rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            font-family: 'JetBrains Mono', monospace;
+        }
+
+        .progress-bar {
+            background: var(--bg-tertiary);
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 30px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+            transition: width 0.3s ease;
+        }
+
+        .question-card {
+            background: var(--bg-secondary);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+            animation: slideInUp 0.5s ease-out;
+        }
+
+        .question-number {
+            color: var(--accent-primary);
+            font-weight: 700;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            font-weight: 600;
+            margin-bottom: 30px;
+            line-height: 1.6;
+        }
+
+        .answer-options {
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+        }
+
+        .option {
+            background: var(--bg-tertiary);
+            padding: 18px 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .option:hover {
+            border-color: var(--accent-secondary);
+            background: rgba(0, 204, 255, 0.05);
+        }
+
+        .option.selected {
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.1);
+        }
+
+        .option.correct {
+            border-color: var(--success);
+            background: rgba(0, 255, 136, 0.15);
+        }
+
+        .option.incorrect {
+            border-color: var(--danger);
+            background: rgba(255, 68, 102, 0.15);
+        }
+
+        .option-label {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: var(--bg-secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+
+        .answer-textarea {
+            width: 100%;
+            min-height: 150px;
+            padding: 18px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 1rem;
+            font-family: 'Epilogue', sans-serif;
+            resize: vertical;
+        }
+
+        .answer-textarea:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        #pastedContent:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            background: rgba(0, 255, 136, 0.05);
+        }
+
+        .question-nav {
+            display: flex;
+            gap: 16px;
+            justify-content: space-between;
+            margin-top: 30px;
+        }
+
+        .results-container {
+            display: none;
+            animation: fadeIn 0.6s ease-out;
+        }
+
+        .score-card {
+            background: linear-gradient(135deg, var(--bg-secondary), var(--bg-tertiary));
+            border-radius: 20px;
+            padding: 60px;
+            text-align: center;
+            margin-bottom: 40px;
+            border: 1px solid var(--border-color);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .score-card::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(0, 255, 136, 0.1) 0%, transparent 70%);
+            animation: pulse 3s ease-in-out infinite;
+        }
+
+        .score-value {
+            font-size: 6rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 16px;
+            position: relative;
+        }
+
+        .score-label {
+            font-size: 1.5rem;
+            color: var(--text-secondary);
+            font-weight: 600;
+            position: relative;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 24px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: var(--bg-secondary);
+            padding: 30px;
+            border-radius: 16px;
+            text-align: center;
+            border: 1px solid var(--border-color);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 800;
+            color: var(--accent-primary);
+            margin-bottom: 8px;
+        }
+
+        .stat-label {
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+            }
+            to {
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes pulse {
+            0%, 100% {
+                transform: rotate(0deg) scale(1);
+            }
+            50% {
+                transform: rotate(180deg) scale(1.1);
+            }
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 60px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid var(--border-color);
+            border-top-color: var(--accent-primary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .ai-feedback {
+            background: var(--bg-tertiary);
+            padding: 24px;
+            border-radius: 12px;
+            margin-top: 20px;
+            border-left: 4px solid var(--accent-primary);
+        }
+
+        .ai-feedback h4 {
+            color: var(--accent-primary);
+            margin-bottom: 12px;
+            font-size: 1.1rem;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2.5rem;
+            }
+
+            .mode-selector {
+                grid-template-columns: 1fr;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .score-value {
+                font-size: 4rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="background-grid"></div>
+    
+    <div class="container">
+        <header>
+            <h1>AI Practice Hub</h1>
+            <p class="subtitle">Mock Tests & Interview Preparation Powered by AI</p>
+        </header>
+
+        <div id="setupView">
+            <div class="mode-selector">
+                <div class="mode-card active" onclick="selectMode('test', this)">
+                    <div class="mode-icon">📝</div>
+                    <h3 class="mode-title">Mock Test</h3>
+                    <p class="mode-description">Multiple choice questions with instant grading and detailed feedback</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('interview', this)">
+                    <div class="mode-icon">💼</div>
+                    <h3 class="mode-title">Mock Interview</h3>
+                    <p class="mode-description">Open-ended questions simulating real interview scenarios</p>
+                </div>
+                <div class="mode-card" onclick="selectMode('mixed', this)">
+                    <div class="mode-icon">🎯</div>
+                    <h3 class="mode-title">Mixed Practice</h3>
+                    <p class="mode-description">Combination of multiple choice and interview-style questions</p>
+                </div>
+            </div>
+
+            <div class="upload-section" id="uploadSection">
+                <div class="upload-icon">📤</div>
+                <p class="upload-text">Upload your study materials</p>
+                <p style="color: var(--text-muted); font-size: 0.9rem; margin-top: -10px; margin-bottom: 20px;">
+                    ✓ PDF files • ✓ Word documents (.docx) • ✓ Text files (.txt, .md)
+                </p>
+                <div class="file-input-wrapper">
+                    <button class="btn btn-primary" onclick="document.getElementById('fileInput').click()">
+                        Choose Files
+                    </button>
+                    <input type="file" id="fileInput" multiple accept=".pdf,.txt,.docx,.doc,.md">
+                </div>
+                <div id="fileActions" style="margin-top: 20px; display: none; gap: 10px; justify-content: center;">
+                    <button class="btn btn-secondary" onclick="selectAllFiles()" style="padding: 10px 20px; font-size: 0.9rem;">
+                        ✓ Select All
+                    </button>
+                    <button class="btn btn-secondary" onclick="deselectAllFiles()" style="padding: 10px 20px; font-size: 0.9rem;">
+                        ✗ Deselect All
+                    </button>
+                </div>
+                <div class="uploaded-files" id="uploadedFiles"></div>
+                
+                <div style="margin-top: 30px; text-align: left;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: 600; color: var(--text-secondary); font-size: 0.9rem; text-transform: uppercase; letter-spacing: 1px;">
+                        Or Paste Additional Content
+                    </label>
+                    <textarea id="pastedContent" 
+                              placeholder="Optional: Paste additional notes or content here to supplement your uploaded files..."
+                              style="width: 100%; min-height: 150px; padding: 18px; background: var(--bg-tertiary); border: 2px solid var(--border-color); border-radius: 12px; color: var(--text-primary); font-size: 0.95rem; font-family: 'Epilogue', sans-serif; resize: vertical; transition: all 0.3s ease;"></textarea>
+                </div>
+            </div>
+
+            <div class="config-section">
+                <div class="config-grid">
+                    <div class="config-item">
+                        <label>Number of Questions</label>
+                        <input type="number" id="numQuestions" value="10" min="5" max="50">
+                    </div>
+                    <div class="config-item">
+                        <label>Difficulty Level</label>
+                        <select id="difficulty">
+                            <option value="easy">Easy</option>
+                            <option value="medium" selected>Medium</option>
+                            <option value="hard">Hard</option>
+                            <option value="mixed">Mixed</option>
+                        </select>
+                    </div>
+                    <div class="config-item">
+                        <label>Time Limit (minutes)</label>
+                        <input type="number" id="timeLimit" value="30" min="5" max="180">
+                    </div>
+                    <div class="config-item">
+                        <label>Focus Area (optional)</label>
+                        <input type="text" id="focusArea" placeholder="e.g., Chapter 5, Algorithms">
+                    </div>
+                </div>
+                <div class="config-item">
+                    <label>Additional Instructions for AI</label>
+                    <textarea id="aiInstructions" placeholder="Any specific topics or question types you want to focus on..."></textarea>
+                </div>
+                <button class="btn btn-primary generate-btn" onclick="generateTest()">
+                    Generate Practice Session
+                </button>
+            </div>
+        </div>
+
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="color: var(--text-secondary); font-size: 1.1rem;" id="loadingMessage">Reading your files and generating questions...</p>
+        </div>
+
+        <div class="test-container" id="testView">
+            <div class="test-header">
+                <div>
+                    <h2 id="testTitle">Mock Test</h2>
+                    <p style="color: var(--text-secondary);" id="testSubtitle">10 Questions • Medium</p>
+                </div>
+                <div class="timer" id="timer">30:00</div>
+            </div>
+
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+
+            <div id="questionsContainer"></div>
+
+            <div class="question-nav">
+                <button class="btn btn-secondary" id="prevBtn" onclick="previousQuestion()">← Previous</button>
+                <button class="btn btn-primary" id="nextBtn" onclick="nextQuestion()">Next →</button>
+                <button class="btn btn-primary" id="submitBtn" onclick="submitTest()" style="display: none;">Submit Test</button>
+            </div>
+        </div>
+
+        <div class="results-container" id="resultsView">
+            <div class="score-card">
+                <div class="score-value" id="scoreValue">0%</div>
+                <div class="score-label">Your Score</div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="correctAnswers">0</div>
+                    <div class="stat-label">Correct</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="incorrectAnswers">0</div>
+                    <div class="stat-label">Incorrect</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="timeSpent">0m</div>
+                    <div class="stat-label">Time Spent</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="accuracyRate">0%</div>
+                    <div class="stat-label">Accuracy</div>
+                </div>
+            </div>
+
+            <div id="detailedResults"></div>
+
+            <div style="text-align: center; margin-top: 40px;">
+                <button class="btn btn-primary" onclick="resetTest()" style="margin-right: 16px;">New Practice Session</button>
+                <button class="btn btn-secondary" onclick="reviewAnswers()">Review Answers</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedMode = 'test';
+        let uploadedFiles = [];
+        let currentQuestion = 0;
+        let questions = [];
+        let userAnswers = [];
+        let startTime = null;
+        let timerInterval = null;
+        let timeRemaining = 0;
+
+        function selectMode(mode, element) {
+            selectedMode = mode;
+            document.querySelectorAll('.mode-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            if (element) {
+                element.classList.add('active');
+            }
+        }
+
+        // File upload handling
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const files = Array.from(e.target.files);
+            files.forEach(file => {
+                if (!uploadedFiles.find(f => f.name === file.name)) {
+                    const index = uploadedFiles.length;
+                    uploadedFiles.push(file);
+                    addFileTag(file, index);
+                }
+            });
+            // Reset input so same file can be selected again if removed
+            e.target.value = '';
+        });
+
+        // Drag and drop
+        const uploadSection = document.getElementById('uploadSection');
+        uploadSection.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadSection.classList.add('dragover');
+        });
+
+        uploadSection.addEventListener('dragleave', () => {
+            uploadSection.classList.remove('dragover');
+        });
+
+        uploadSection.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadSection.classList.remove('dragover');
+            const files = Array.from(e.dataTransfer.files);
+            files.forEach(file => {
+                if (!uploadedFiles.find(f => f.name === file.name)) {
+                    const index = uploadedFiles.length;
+                    uploadedFiles.push(file);
+                    addFileTag(file, index);
+                }
+            });
+        });
+
+        function addFileTag(file, index) {
+            const container = document.getElementById('uploadedFiles');
+            const tag = document.createElement('div');
+            tag.className = 'file-tag selected';
+            tag.id = `file-tag-${index}`;
+            
+            const fileSize = (file.size / 1024).toFixed(1) + ' KB';
+            const fileName = file.name.toLowerCase();
+            
+            // Determine file icon
+            let fileIcon = '📄';
+            if (fileName.endsWith('.pdf')) fileIcon = '📕';
+            else if (fileName.endsWith('.docx') || fileName.endsWith('.doc')) fileIcon = '📘';
+            else if (fileName.endsWith('.txt')) fileIcon = '📝';
+            else if (fileName.endsWith('.md')) fileIcon = '📋';
+            
+            tag.innerHTML = `
+                <input type="checkbox" class="file-checkbox" id="file-checkbox-${index}" 
+                       checked onchange="toggleFileSelection(${index})">
+                <div class="file-info">
+                    <span class="file-name">${fileIcon} ${file.name}</span>
+                    <span class="file-size">${fileSize}</span>
+                </div>
+                <span class="remove-file" onclick="removeFile(${index})">✕</span>
+            `;
+            container.appendChild(tag);
+            
+            // Show file action buttons if files exist
+            document.getElementById('fileActions').style.display = 'flex';
+        }
+
+        function toggleFileSelection(index) {
+            const checkbox = document.getElementById(`file-checkbox-${index}`);
+            const tag = document.getElementById(`file-tag-${index}`);
+            
+            if (checkbox.checked) {
+                tag.classList.add('selected');
+            } else {
+                tag.classList.remove('selected');
+            }
+        }
+
+        function selectAllFiles() {
+            uploadedFiles.forEach((file, index) => {
+                const checkbox = document.getElementById(`file-checkbox-${index}`);
+                const tag = document.getElementById(`file-tag-${index}`);
+                if (checkbox) {
+                    checkbox.checked = true;
+                    tag.classList.add('selected');
+                }
+            });
+        }
+
+        function deselectAllFiles() {
+            uploadedFiles.forEach((file, index) => {
+                const checkbox = document.getElementById(`file-checkbox-${index}`);
+                const tag = document.getElementById(`file-tag-${index}`);
+                if (checkbox) {
+                    checkbox.checked = false;
+                    tag.classList.remove('selected');
+                }
+            });
+        }
+
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            refreshFileList();
+        }
+
+        function refreshFileList() {
+            const container = document.getElementById('uploadedFiles');
+            container.innerHTML = '';
+            uploadedFiles.forEach((file, index) => addFileTag(file, index));
+            
+            // Hide file actions if no files
+            if (uploadedFiles.length === 0) {
+                document.getElementById('fileActions').style.display = 'none';
+            }
+        }
+
+        async function generateTest() {
+            const numQuestions = parseInt(document.getElementById('numQuestions').value);
+            const difficulty = document.getElementById('difficulty').value;
+            const timeLimit = parseInt(document.getElementById('timeLimit').value);
+            const focusArea = document.getElementById('focusArea').value.trim();
+            const aiInstructions = document.getElementById('aiInstructions').value.trim();
+            const pastedContent = document.getElementById('pastedContent').value.trim();
+
+            // Get selected files
+            const selectedFiles = [];
+            uploadedFiles.forEach((file, index) => {
+                const checkbox = document.getElementById(`file-checkbox-${index}`);
+                if (checkbox && checkbox.checked) {
+                    selectedFiles.push(file);
+                }
+            });
+
+            if (selectedFiles.length === 0 && !aiInstructions && !pastedContent) {
+                alert('Please select at least one file, paste content, or provide instructions for the AI');
+                return;
+            }
+
+            // Show loading
+            document.getElementById('setupView').style.display = 'none';
+            document.getElementById('loading').classList.add('active');
+            const loadingMessage = document.getElementById('loadingMessage');
+
+            // Read file contents
+            let materialContent = '';
+            
+            // Add pasted content first if available
+            if (pastedContent) {
+                materialContent += `\n\n=== Pasted Content ===\n${pastedContent}\n`;
+                console.log('Added pasted content:', pastedContent.length, 'characters');
+            }
+            
+            // Process each selected file
+            for (let i = 0; i < selectedFiles.length; i++) {
+                const file = selectedFiles[i];
+                loadingMessage.textContent = `Reading ${file.name} (${i + 1}/${selectedFiles.length})...`;
+                
+                try {
+                    console.log(`Starting to read file: ${file.name} (${file.size} bytes)`);
+                    const content = await readFileContent(file);
+                    
+                    if (content && content.trim().length > 0) {
+                        materialContent += `\n\n=== Content from ${file.name} ===\n${content}\n`;
+                        console.log(`✓ Successfully read ${file.name}: ${content.length} characters`);
+                    } else {
+                        console.warn(`⚠ File ${file.name} appears to be empty`);
+                        materialContent += `\n\n=== ${file.name} ===\n[File appears to be empty]\n`;
+                    }
+                } catch (error) {
+                    console.error(`✗ Error reading ${file.name}:`, error);
+                    alert(`Error reading ${file.name}: ${error.message}\n\nContinuing with other files...`);
+                    materialContent += `\n\n=== ${file.name} ===\n[Error reading file: ${error.message}]\n`;
+                }
+            }
+
+            // If no file content but has instructions, note that
+            if (!materialContent.trim() && aiInstructions) {
+                materialContent = '[No file content provided - generating questions based on instructions only]';
+            }
+
+            console.log('Total material content length:', materialContent.length);
+            loadingMessage.textContent = 'Generating questions with AI...';
+
+            // Generate questions using AI
+            try {
+                const generatedQuestions = await generateQuestionsWithAI(
+                    materialContent,
+                    numQuestions,
+                    difficulty,
+                    selectedMode,
+                    focusArea,
+                    aiInstructions,
+                    selectedFiles.map(f => f.name)
+                );
+
+                questions = generatedQuestions;
+                userAnswers = new Array(questions.length).fill(null);
+                
+                // Setup test
+                document.getElementById('loading').classList.remove('active');
+                startTest(timeLimit, numQuestions, difficulty);
+            } catch (error) {
+                console.error('Error generating questions:', error);
+                document.getElementById('loading').classList.remove('active');
+                document.getElementById('setupView').style.display = 'block';
+                alert('Error generating questions. Please try again.');
+            }
+        }
+
+        // Configure PDF.js worker
+        if (typeof pdfjsLib !== 'undefined') {
+            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+        }
+
+        async function readFileContent(file) {
+            const fileName = file.name.toLowerCase();
+            
+            try {
+                // Handle PDF files
+                if (fileName.endsWith('.pdf')) {
+                    console.log(`Reading PDF: ${file.name}`);
+                    return await extractTextFromPDF(file);
+                }
+                
+                // Handle DOCX files
+                if (fileName.endsWith('.docx')) {
+                    console.log(`Reading DOCX: ${file.name}`);
+                    return await extractTextFromDOCX(file);
+                }
+                
+                // Handle text-based files (.txt, .md, etc.)
+                console.log(`Reading text file: ${file.name}`);
+                return await readTextFile(file);
+                
+            } catch (error) {
+                console.error(`Error reading ${file.name}:`, error);
+                throw error;
+            }
+        }
+
+        async function extractTextFromPDF(file) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                    
+                    let fullText = '';
+                    const numPages = pdf.numPages;
+                    
+                    console.log(`PDF has ${numPages} pages`);
+                    
+                    // Extract text from each page
+                    for (let pageNum = 1; pageNum <= numPages; pageNum++) {
+                        const page = await pdf.getPage(pageNum);
+                        const textContent = await page.getTextContent();
+                        const pageText = textContent.items.map(item => item.str).join(' ');
+                        fullText += pageText + '\n\n';
+                        
+                        // Log progress for large PDFs
+                        if (pageNum % 5 === 0) {
+                            console.log(`Processed ${pageNum}/${numPages} pages`);
+                        }
+                    }
+                    
+                    console.log(`Successfully extracted ${fullText.length} characters from PDF`);
+                    resolve(fullText.trim());
+                } catch (error) {
+                    console.error('PDF extraction error:', error);
+                    reject(new Error(`Failed to extract text from PDF: ${error.message}`));
+                }
+            });
+        }
+
+        async function extractTextFromDOCX(file) {
+            return new Promise(async (resolve, reject) => {
+                try {
+                    const arrayBuffer = await file.arrayBuffer();
+                    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+                    
+                    console.log(`Successfully extracted ${result.value.length} characters from DOCX`);
+                    
+                    if (result.messages && result.messages.length > 0) {
+                        console.warn('DOCX parsing warnings:', result.messages);
+                    }
+                    
+                    resolve(result.value);
+                } catch (error) {
+                    console.error('DOCX extraction error:', error);
+                    reject(new Error(`Failed to extract text from DOCX: ${error.message}`));
+                }
+            });
+        }
+
+        async function readTextFile(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                
+                reader.onload = (e) => {
+                    const text = e.target.result;
+                    console.log(`Successfully read ${text.length} characters from text file`);
+                    resolve(text);
+                };
+                
+                reader.onerror = () => {
+                    reject(new Error('Failed to read text file'));
+                };
+                
+                reader.readAsText(file);
+            });
+        }
+
+        async function generateQuestionsWithAI(content, numQuestions, difficulty, mode, focusArea, instructions, fileNames) {
+            // Generate questions locally from the content
+            console.log('Generating questions from content...');
+            console.log('Content length:', content.length);
+            
+            // Check if we have actual content to work with
+            if (!content || content.trim().length < 50) {
+                console.log('Not enough content, using general questions');
+                return generateSampleQuestions(numQuestions, mode, focusArea, instructions, content);
+            }
+
+            try {
+                // Generate questions based on actual content
+                return generateQuestionsFromContent(content, numQuestions, difficulty, mode, focusArea, instructions);
+            } catch (error) {
+                console.error('Question generation error:', error);
+                return generateSampleQuestions(numQuestions, mode, focusArea, instructions, content);
+            }
+        }
+
+        function generateQuestionsFromContent(content, numQuestions, difficulty, mode, focusArea, instructions) {
+            const questions = [];
+            
+            // Clean and prepare content
+            const cleanContent = content.replace(/\s+/g, ' ').trim();
+            
+            // Split content into sentences
+            const sentences = cleanContent.split(/[.!?]+/).filter(s => s.trim().length > 20);
+            
+            // Split into paragraphs for context
+            const paragraphs = content.split(/\n\n+/).filter(p => p.trim().length > 50);
+            
+            // Extract key terms (words that appear multiple times)
+            const words = cleanContent.toLowerCase().match(/\b[a-z]{4,}\b/g) || [];
+            const wordFreq = {};
+            words.forEach(word => {
+                wordFreq[word] = (wordFreq[word] || 0) + 1;
+            });
+            
+            // Get important terms (appear 2+ times)
+            const keyTerms = Object.entries(wordFreq)
+                .filter(([word, freq]) => freq >= 2 && freq <= 20)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 30)
+                .map(([word]) => word);
+            
+            console.log('Found key terms:', keyTerms.slice(0, 10));
+            
+            // Generate MCQ questions
+            if (mode === 'test' || mode === 'mixed') {
+                const mcqCount = mode === 'mixed' ? Math.ceil(numQuestions / 2) : numQuestions;
+                
+                for (let i = 0; i < mcqCount && i < sentences.length; i++) {
+                    const sentence = sentences[Math.floor(Math.random() * sentences.length)].trim();
+                    const paragraph = paragraphs[Math.floor(Math.random() * paragraphs.length)] || sentence;
+                    
+                    // Create a question from the sentence
+                    const mcq = createMCQFromSentence(sentence, paragraph, keyTerms, focusArea, difficulty, i + 1);
+                    questions.push(mcq);
+                }
+            }
+            
+            // Generate interview questions
+            if (mode === 'interview' || mode === 'mixed') {
+                const interviewCount = mode === 'mixed' ? Math.floor(numQuestions / 2) : numQuestions;
+                
+                for (let i = 0; i < interviewCount; i++) {
+                    const paragraph = paragraphs[Math.min(i, paragraphs.length - 1)] || sentences.slice(i * 3, i * 3 + 3).join('. ');
+                    const interview = createInterviewQuestion(paragraph, keyTerms, focusArea, difficulty, i + 1);
+                    questions.push(interview);
+                }
+            }
+            
+            // Shuffle and return the requested number
+            return questions.slice(0, numQuestions);
+        }
+
+        function createMCQFromSentence(sentence, context, keyTerms, focusArea, difficulty, questionNum) {
+            // Extract the main subject
+            const words = sentence.split(' ');
+            const importantWord = keyTerms.find(term => sentence.toLowerCase().includes(term)) || 
+                                  words.find(w => w.length > 5) || words[0];
+            
+            // Create question variations based on difficulty
+            const questionTemplates = {
+                easy: [
+                    `According to the material, what is mentioned about ${importantWord}?`,
+                    `Based on the content, which statement about ${importantWord} is correct?`,
+                    `What does the material say regarding ${importantWord}?`
+                ],
+                medium: [
+                    `Which of the following best describes ${importantWord} as presented in the material?`,
+                    `According to the content, how is ${importantWord} characterized?`,
+                    `What is the main point made about ${importantWord}?`
+                ],
+                hard: [
+                    `Analyze the following: How does the material conceptualize ${importantWord}?`,
+                    `What is the most significant implication regarding ${importantWord} based on the content?`,
+                    `Which interpretation of ${importantWord} is most supported by the material?`
+                ]
+            };
+            
+            const templates = questionTemplates[difficulty] || questionTemplates.medium;
+            const question = templates[Math.floor(Math.random() * templates.length)];
+            
+            // Create answer options
+            const correctAnswer = sentence.substring(0, 100).trim() + (sentence.length > 100 ? '...' : '');
+            
+            const options = [
+                correctAnswer,
+                generateDistractorOption(sentence, keyTerms, 1),
+                generateDistractorOption(sentence, keyTerms, 2),
+                generateDistractorOption(sentence, keyTerms, 3)
+            ];
+            
+            // Shuffle options
+            const correctIndex = Math.floor(Math.random() * 4);
+            const shuffled = [...options];
+            const temp = shuffled[0];
+            shuffled[0] = shuffled[correctIndex];
+            shuffled[correctIndex] = temp;
+            
+            return {
+                question: focusArea ? question.replace(importantWord, focusArea) : question,
+                options: shuffled,
+                correctAnswer: shuffled.indexOf(correctAnswer),
+                explanation: `This is based on the content which states: "${sentence.substring(0, 150)}..."`,
+                difficulty: difficulty,
+                type: 'mcq'
+            };
+        }
+
+        function generateDistractorOption(correctSentence, keyTerms, variation) {
+            const distractors = [
+                'This concept is not directly addressed in the provided material',
+                'The material suggests an alternative perspective on this topic',
+                'This represents a common misconception about the subject matter',
+                'This interpretation, while plausible, is not supported by the content',
+                'This would be true in a different context but not according to this material',
+                'This is a related but distinct concept not covered here'
+            ];
+            
+            return distractors[variation % distractors.length];
+        }
+
+        function createInterviewQuestion(context, keyTerms, focusArea, difficulty, questionNum) {
+            const mainTopic = focusArea || keyTerms[questionNum % keyTerms.length] || 'the main topic';
+            
+            const questionTemplates = {
+                easy: [
+                    `Explain what you learned about ${mainTopic} from the study material.`,
+                    `Describe the key points mentioned regarding ${mainTopic}.`,
+                    `What are the main ideas presented about ${mainTopic}?`
+                ],
+                medium: [
+                    `Analyze and discuss the approach to ${mainTopic} as presented in the material.`,
+                    `How would you explain the significance of ${mainTopic} based on what you studied?`,
+                    `Compare and contrast the different aspects of ${mainTopic} covered in the material.`
+                ],
+                hard: [
+                    `Critically evaluate the treatment of ${mainTopic} in the study material. What are its strengths and limitations?`,
+                    `How might the concepts related to ${mainTopic} apply to real-world scenarios? Provide specific examples.`,
+                    `Synthesize the information about ${mainTopic} and propose how it connects to broader themes in the field.`
+                ]
+            };
+            
+            const templates = questionTemplates[difficulty] || questionTemplates.medium;
+            const question = templates[Math.floor(Math.random() * templates.length)];
+            
+            // Create sample answer from context
+            const sampleAnswer = context.substring(0, 300).trim() + 
+                (context.length > 300 ? '... [A complete answer would expand on these points with specific examples and analysis]' : '');
+            
+            return {
+                question: question,
+                type: 'open-ended',
+                sampleAnswer: sampleAnswer,
+                evaluationCriteria: [
+                    'Demonstrates understanding of key concepts',
+                    'References specific information from the material',
+                    'Provides clear explanations',
+                    'Shows analytical thinking',
+                    focusArea ? `Addresses ${focusArea} comprehensively` : 'Covers main topics thoroughly'
+                ],
+                difficulty: difficulty
+            };
+        }
+
+        function generateSampleQuestions(numQuestions, mode, focusArea, instructions, content) {
+            const sampleQuestions = [];
+            const focusText = focusArea ? ` about ${focusArea}` : '';
+            const instructionNote = instructions ? ` (${instructions})` : '';
+            
+            // Try to extract some context from the content
+            let contentHint = '';
+            if (content && content.length > 100) {
+                // Get first meaningful sentence
+                const sentences = content.split('.').filter(s => s.trim().length > 20);
+                if (sentences.length > 0) {
+                    contentHint = ` Related to: "${sentences[0].trim().substring(0, 100)}..."`;
+                }
+            }
+            
+            if (mode === 'test' || mode === 'mixed') {
+                const mcqCount = mode === 'mixed' ? Math.ceil(numQuestions / 2) : numQuestions;
+                for (let i = 0; i < mcqCount; i++) {
+                    sampleQuestions.push({
+                        question: `Question ${i + 1}${focusText}: Based on the study material${contentHint}, which of the following best describes the main concept?`,
+                        options: [
+                            'The primary approach focuses on theoretical foundations and abstract principles',
+                            'The methodology emphasizes practical implementation and real-world applications',
+                            'The framework combines both theoretical and applied perspectives',
+                            'The system prioritizes experimental validation over traditional methods'
+                        ],
+                        correctAnswer: Math.floor(Math.random() * 4),
+                        explanation: `This answer correctly identifies the key concept from the material${focusText}. The other options, while related, don't capture the primary focus as accurately.`,
+                        difficulty: 'medium',
+                        type: 'mcq'
+                    });
+                }
+            }
+            
+            if (mode === 'interview' || mode === 'mixed') {
+                const interviewCount = mode === 'mixed' ? Math.floor(numQuestions / 2) : numQuestions;
+                for (let i = 0; i < interviewCount; i++) {
+                    sampleQuestions.push({
+                        question: `Interview Question ${i + 1}${focusText}: Explain the main concepts from the study material${contentHint}. Describe your understanding and provide examples.`,
+                        type: 'open-ended',
+                        sampleAnswer: `A comprehensive answer should demonstrate understanding of the core principles, explain the key concepts in your own words, provide relevant examples from the material, and show how these ideas can be applied practically. ${focusText ? `Special attention should be given to ${focusArea}.` : ''} ${instructionNote}`,
+                        evaluationCriteria: [
+                            'Clear understanding of core concepts',
+                            'Ability to explain in own words',
+                            'Relevant examples provided',
+                            'Practical application demonstrated',
+                            focusArea ? `In-depth knowledge of ${focusArea}` : 'Comprehensive subject knowledge'
+                        ],
+                        difficulty: 'medium'
+                    });
+                }
+            }
+
+            return sampleQuestions.slice(0, numQuestions);
+        }
+
+        function startTest(timeLimit, numQuestions, difficulty) {
+            document.getElementById('testView').style.display = 'block';
+            document.getElementById('testTitle').textContent = selectedMode === 'test' ? 'Mock Test' : 
+                                                               selectedMode === 'interview' ? 'Mock Interview' : 'Mixed Practice';
+            document.getElementById('testSubtitle').textContent = `${numQuestions} Questions • ${difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}`;
+            
+            timeRemaining = timeLimit * 60;
+            startTime = Date.now();
+            startTimer();
+            
+            currentQuestion = 0;
+            renderQuestion();
+        }
+
+        function startTimer() {
+            updateTimerDisplay();
+            timerInterval = setInterval(() => {
+                timeRemaining--;
+                updateTimerDisplay();
+                
+                if (timeRemaining <= 0) {
+                    clearInterval(timerInterval);
+                    submitTest();
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeRemaining / 60);
+            const seconds = timeRemaining % 60;
+            document.getElementById('timer').textContent = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+            
+            if (timeRemaining < 60) {
+                document.getElementById('timer').style.color = 'var(--danger)';
+            }
+        }
+
+        function renderQuestion() {
+            const container = document.getElementById('questionsContainer');
+            const question = questions[currentQuestion];
+            
+            let questionHTML = `
+                <div class="question-card">
+                    <div class="question-number">Question ${currentQuestion + 1} of ${questions.length}</div>
+                    <div class="question-text">${question.question}</div>
+            `;
+
+            if (question.type === 'open-ended') {
+                questionHTML += `
+                    <textarea class="answer-textarea" id="answer-${currentQuestion}" 
+                              placeholder="Type your answer here...">${userAnswers[currentQuestion] || ''}</textarea>
+                `;
+            } else {
+                questionHTML += `<div class="answer-options">`;
+                question.options.forEach((option, index) => {
+                    const isSelected = userAnswers[currentQuestion] === index;
+                    questionHTML += `
+                        <div class="option ${isSelected ? 'selected' : ''}" onclick="selectAnswer(${index})">
+                            <div class="option-label">${String.fromCharCode(65 + index)}</div>
+                            <div>${option.replace(/^[A-D]\)\s*/, '')}</div>
+                        </div>
+                    `;
+                });
+                questionHTML += `</div>`;
+            }
+
+            questionHTML += `</div>`;
+            container.innerHTML = questionHTML;
+
+            // Update progress
+            const progress = ((currentQuestion + 1) / questions.length) * 100;
+            document.getElementById('progressFill').style.width = `${progress}%`;
+
+            // Update navigation buttons
+            document.getElementById('prevBtn').style.display = currentQuestion === 0 ? 'none' : 'block';
+            document.getElementById('nextBtn').style.display = currentQuestion === questions.length - 1 ? 'none' : 'block';
+            document.getElementById('submitBtn').style.display = currentQuestion === questions.length - 1 ? 'block' : 'none';
+        }
+
+        function selectAnswer(index) {
+            userAnswers[currentQuestion] = index;
+            renderQuestion();
+        }
+
+        function previousQuestion() {
+            if (questions[currentQuestion].type === 'open-ended') {
+                const textarea = document.getElementById(`answer-${currentQuestion}`);
+                if (textarea) {
+                    userAnswers[currentQuestion] = textarea.value;
+                }
+            }
+            
+            if (currentQuestion > 0) {
+                currentQuestion--;
+                renderQuestion();
+            }
+        }
+
+        function nextQuestion() {
+            if (questions[currentQuestion].type === 'open-ended') {
+                const textarea = document.getElementById(`answer-${currentQuestion}`);
+                if (textarea) {
+                    userAnswers[currentQuestion] = textarea.value;
+                }
+            }
+            
+            if (currentQuestion < questions.length - 1) {
+                currentQuestion++;
+                renderQuestion();
+            }
+        }
+
+        async function submitTest() {
+            if (questions[currentQuestion].type === 'open-ended') {
+                const textarea = document.getElementById(`answer-${currentQuestion}`);
+                if (textarea) {
+                    userAnswers[currentQuestion] = textarea.value;
+                }
+            }
+
+            clearInterval(timerInterval);
+            
+            // Show loading
+            document.getElementById('testView').style.display = 'none';
+            document.getElementById('loading').classList.add('active');
+
+            // Evaluate answers
+            await evaluateTest();
+
+            document.getElementById('loading').classList.remove('active');
+            showResults();
+        }
+
+        async function evaluateTest() {
+            let correct = 0;
+            
+            for (let i = 0; i < questions.length; i++) {
+                const question = questions[i];
+                
+                if (question.type === 'open-ended') {
+                    // Use AI to evaluate open-ended answers
+                    const evaluation = await evaluateOpenEndedAnswer(
+                        question.question,
+                        userAnswers[i],
+                        question.sampleAnswer,
+                        question.evaluationCriteria
+                    );
+                    question.userScore = evaluation.score;
+                    question.feedback = evaluation.feedback;
+                    if (evaluation.score >= 0.7) correct++;
+                } else {
+                    // Check MCQ answer
+                    if (userAnswers[i] === question.correctAnswer) {
+                        correct++;
+                        question.isCorrect = true;
+                    } else {
+                        question.isCorrect = false;
+                    }
+                }
+            }
+
+            return correct;
+        }
+
+        async function evaluateOpenEndedAnswer(question, userAnswer, sampleAnswer, criteria) {
+            if (!userAnswer || userAnswer.trim() === '') {
+                return {
+                    score: 0,
+                    feedback: 'No answer provided.'
+                };
+            }
+
+            // Local evaluation based on answer quality
+            const answerLength = userAnswer.trim().split(/\s+/).length;
+            const sampleLength = sampleAnswer.trim().split(/\s+/).length;
+            
+            let score = 0;
+            let feedback = [];
+            
+            // Length check (20% of score)
+            if (answerLength >= sampleLength * 0.5) {
+                score += 0.2;
+                feedback.push('✓ Answer has good length and detail');
+            } else {
+                feedback.push('• Consider providing more detailed explanation');
+            }
+            
+            // Keyword matching (40% of score)
+            const sampleWords = sampleAnswer.toLowerCase().match(/\b[a-z]{4,}\b/g) || [];
+            const userWords = userAnswer.toLowerCase().match(/\b[a-z]{4,}\b/g) || [];
+            const sampleKeywords = [...new Set(sampleWords)].slice(0, 20);
+            const matchedKeywords = sampleKeywords.filter(word => userWords.includes(word));
+            
+            const keywordScore = Math.min(matchedKeywords.length / sampleKeywords.length, 1) * 0.4;
+            score += keywordScore;
+            
+            if (keywordScore > 0.3) {
+                feedback.push(`✓ Answer includes relevant key concepts (${matchedKeywords.length} key terms)`);
+            } else {
+                feedback.push('• Try to include more specific terms from the material');
+            }
+            
+            // Structure check (20% of score)
+            const hasParagraphs = userAnswer.split('\n').length > 1;
+            const hasExamples = /example|for instance|such as|like|e\.g\./i.test(userAnswer);
+            
+            if (hasParagraphs || hasExamples) {
+                score += 0.2;
+                feedback.push('✓ Answer is well-structured with examples or paragraphs');
+            } else {
+                feedback.push('• Consider organizing your answer into paragraphs or adding examples');
+            }
+            
+            // Completeness (20% of score)
+            const criteriaMatched = criteria.filter(c => 
+                userAnswer.toLowerCase().includes(c.toLowerCase().split(' ')[0])
+            ).length;
+            
+            score += (criteriaMatched / criteria.length) * 0.2;
+            
+            if (criteriaMatched >= criteria.length / 2) {
+                feedback.push(`✓ Addresses ${criteriaMatched} out of ${criteria.length} evaluation criteria`);
+            } else {
+                feedback.push(`• Try to address more evaluation criteria (covered ${criteriaMatched}/${criteria.length})`);
+            }
+            
+            // Final score message
+            let scoreMessage = '';
+            if (score >= 0.8) scoreMessage = 'Excellent answer!';
+            else if (score >= 0.6) scoreMessage = 'Good answer with room for improvement.';
+            else if (score >= 0.4) scoreMessage = 'Fair answer, needs more detail.';
+            else scoreMessage = 'Answer needs significant improvement.';
+            
+            return {
+                score: score,
+                feedback: `${scoreMessage}\n\n${feedback.join('\n')}\n\nSuggestion: Review the sample answer to see what a comprehensive response includes.`
+            };
+        }
+
+        function showResults() {
+            document.getElementById('resultsView').style.display = 'block';
+            
+            let correct = 0;
+            let totalScore = 0;
+            
+            questions.forEach((q, i) => {
+                if (q.type === 'open-ended') {
+                    totalScore += (q.userScore || 0);
+                    if (q.userScore >= 0.7) correct++;
+                } else {
+                    if (q.isCorrect) {
+                        correct++;
+                        totalScore += 1;
+                    }
+                }
+            });
+
+            const scorePercentage = Math.round((totalScore / questions.length) * 100);
+            const timeElapsed = Math.floor((Date.now() - startTime) / 1000 / 60);
+
+            document.getElementById('scoreValue').textContent = `${scorePercentage}%`;
+            document.getElementById('correctAnswers').textContent = correct;
+            document.getElementById('incorrectAnswers').textContent = questions.length - correct;
+            document.getElementById('timeSpent').textContent = `${timeElapsed}m`;
+            document.getElementById('accuracyRate').textContent = `${Math.round((correct / questions.length) * 100)}%`;
+
+            // Detailed results
+            const detailedContainer = document.getElementById('detailedResults');
+            let detailedHTML = '<h2 style="margin-bottom: 30px;">Detailed Review</h2>';
+
+            questions.forEach((q, i) => {
+                detailedHTML += `
+                    <div class="question-card">
+                        <div class="question-number">Question ${i + 1}</div>
+                        <div class="question-text">${q.question}</div>
+                `;
+
+                if (q.type === 'open-ended') {
+                    detailedHTML += `
+                        <div style="margin: 20px 0;">
+                            <strong style="color: var(--text-secondary);">Your Answer:</strong>
+                            <div style="background: var(--bg-tertiary); padding: 16px; border-radius: 8px; margin-top: 8px;">
+                                ${userAnswers[i] || '<em>No answer provided</em>'}
+                            </div>
+                        </div>
+                        <div class="ai-feedback">
+                            <h4>AI Evaluation (Score: ${Math.round((q.userScore || 0) * 100)}%)</h4>
+                            <p style="color: var(--text-secondary);">${q.feedback || 'No feedback available'}</p>
+                        </div>
+                    `;
+                } else {
+                    detailedHTML += `<div class="answer-options">`;
+                    q.options.forEach((option, index) => {
+                        const isUserAnswer = userAnswers[i] === index;
+                        const isCorrect = index === q.correctAnswer;
+                        let className = 'option';
+                        if (isCorrect) className += ' correct';
+                        else if (isUserAnswer) className += ' incorrect';
+
+                        detailedHTML += `
+                            <div class="${className}">
+                                <div class="option-label">${String.fromCharCode(65 + index)}</div>
+                                <div>${option.replace(/^[A-D]\)\s*/, '')}</div>
+                            </div>
+                        `;
+                    });
+                    detailedHTML += `</div>`;
+                    
+                    if (q.explanation) {
+                        detailedHTML += `
+                            <div class="ai-feedback">
+                                <h4>Explanation</h4>
+                                <p style="color: var(--text-secondary);">${q.explanation}</p>
+                            </div>
+                        `;
+                    }
+                }
+
+                detailedHTML += `</div>`;
+            });
+
+            detailedContainer.innerHTML = detailedHTML;
+        }
+
+        function resetTest() {
+            document.getElementById('resultsView').style.display = 'none';
+            document.getElementById('setupView').style.display = 'block';
+            uploadedFiles = [];
+            document.getElementById('uploadedFiles').innerHTML = '';
+            currentQuestion = 0;
+            questions = [];
+            userAnswers = [];
+        }
+
+        function reviewAnswers() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            setTimeout(() => {
+                document.getElementById('detailedResults').scrollIntoView({ behavior: 'smooth' });
+            }, 300);
+        }
+
+    </script>
+</body>
+</html>
